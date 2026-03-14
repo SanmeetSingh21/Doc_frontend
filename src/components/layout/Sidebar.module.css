@@ -118,3 +118,18 @@
 }
 
 .toggleCollapsed svg { transform: rotate(180deg); }
+
+
+.roleBadge {
+  margin: 0 var(--space-3) var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  background: rgba(236,72,153,0.15);
+  border: 1px solid rgba(236,72,153,0.25);
+  border-radius: var(--radius-full);
+  font-size: 10px;
+  font-weight: var(--weight-semibold);
+  color: var(--clr-primary-400);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-align: center;
+}

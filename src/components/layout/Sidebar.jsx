@@ -5,23 +5,28 @@ import {
   FileCheck, MessageSquare, ChevronLeft, Heart
 } from 'lucide-react'
 import clsx from 'clsx'
+import { useAuth, ROLE_PERMISSIONS } from '@/store/index'
 import styles from './Sidebar.module.css'
 
-const NAV_ITEMS = [
-  { to: '/dashboard',      icon: LayoutDashboard, label: 'Dashboard' },
-  { to: '/patients',       icon: Users,           label: 'Patients' },
-  { to: '/opd',            icon: Stethoscope,     label: 'OPD Consultation' },
-  { to: '/pregnancy',      icon: Baby,            label: 'Pregnancy & ANC' },
-  { to: '/ultrasound',     icon: Scan,            label: 'Ultrasound' },
-  { to: '/reconstructive', icon: Scissors,        label: 'Reconstructive' },
-  { to: '/fertility',      icon: FlaskConical,    label: 'Fertility & IVF' },
-  { to: '/billing',        icon: Receipt,         label: 'Billing' },
-  { to: '/calculators',    icon: Calculator,      label: 'Calculators' },
-  { to: '/consent',        icon: FileCheck,       label: 'Consent & Legal' },
-  { to: '/engagement',     icon: MessageSquare,   label: 'Engagement' },
+const ALL_NAV_ITEMS = [
+  { to: '/dashboard',      icon: LayoutDashboard, label: 'Dashboard',        module: 'dashboard'      },
+  { to: '/patients',       icon: Users,           label: 'Patients',         module: 'patients'       },
+  { to: '/opd',            icon: Stethoscope,     label: 'OPD Consultation', module: 'opd'            },
+  { to: '/pregnancy',      icon: Baby,            label: 'Pregnancy & ANC',  module: 'pregnancy'      },
+  { to: '/ultrasound',     icon: Scan,            label: 'Ultrasound',       module: 'ultrasound'     },
+  { to: '/reconstructive', icon: Scissors,        label: 'Reconstructive',   module: 'reconstructive' },
+  { to: '/fertility',      icon: FlaskConical,    label: 'Fertility & IVF',  module: 'fertility'      },
+  { to: '/billing',        icon: Receipt,         label: 'Billing',          module: 'billing'        },
+  { to: '/calculators',    icon: Calculator,      label: 'Calculators',      module: 'calculators'    },
+  { to: '/consent',        icon: FileCheck,       label: 'Consent & Legal',  module: 'consent'        },
+  { to: '/engagement',     icon: MessageSquare,   label: 'Engagement',       module: 'engagement'     },
 ]
 
 export default function Sidebar({ collapsed, onToggle }) {
+  const { user } = useAuth()
+  const allowed  = ROLE_PERMISSIONS[user?.role] || []
+  const navItems = ALL_NAV_ITEMS.filter(item => allowed.includes(item.module))
+
   return (
     <aside className={clsx(styles.sidebar, collapsed && styles.collapsed)}>
       {/* Logo */}
@@ -37,9 +42,16 @@ export default function Sidebar({ collapsed, onToggle }) {
         )}
       </div>
 
+      {/* Role badge */}
+      {!collapsed && (
+        <div className={styles.roleBadge}>
+          {user?.roleLabel}
+        </div>
+      )}
+
       {/* Nav */}
       <nav className={styles.nav}>
-        {NAV_ITEMS.map(({ to, icon: Icon, label }) => (
+        {navItems.map(({ to, icon: Icon, label }) => (
           <NavLink
             key={to}
             to={to}

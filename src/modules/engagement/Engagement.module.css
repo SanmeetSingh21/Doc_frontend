@@ -1,0 +1,44 @@
+.pageHeader { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:var(--space-6); }
+.pageTitle  { font-family:var(--font-display); font-size:var(--text-3xl); line-height:1; }
+.pageSub    { font-size:var(--text-sm); color:var(--text-muted); margin-top:var(--space-1); }
+
+.layout     { display:grid; grid-template-columns:340px 1fr; gap:var(--space-5); align-items:start; }
+.composeCol { display:flex; flex-direction:column; gap:var(--space-4); }
+.logCol     { display:flex; flex-direction:column; gap:var(--space-4); }
+
+.cardTitle { font-size:var(--text-sm); font-weight:var(--weight-semibold); text-transform:uppercase; letter-spacing:.07em; color:var(--text-primary); margin-bottom:var(--space-4); display:flex; align-items:center; gap:var(--space-2); }
+.cardTitle::before { content:''; width:3px; height:14px; background:var(--clr-primary-500); border-radius:var(--radius-full); }
+
+.channelRow { display:flex; gap:var(--space-2); }
+.channelBtn { flex:1; display:flex; align-items:center; justify-content:center; gap:var(--space-2); padding:var(--space-3); border:1px solid var(--border-default); border-radius:var(--radius-lg); background:white; font-size:var(--text-sm); font-family:var(--font-body); cursor:pointer; color:var(--text-secondary); transition:all var(--transition-fast); }
+.channelBtn:hover { border-color:var(--clr-primary-300); background:var(--clr-primary-50); }
+.channelActive    { border-color:var(--clr-primary-500) !important; background:var(--clr-primary-50) !important; color:var(--clr-primary-700) !important; font-weight:var(--weight-medium); }
+
+.msgLabel { display:block; font-size:var(--text-sm); font-weight:var(--weight-medium); color:var(--text-primary); margin-bottom:var(--space-2); }
+.msgArea  { width:100%; padding:var(--space-3); font-family:var(--font-body); font-size:var(--text-sm); color:var(--text-primary); background:var(--surface-input); border:1px solid var(--border-default); border-radius:var(--radius-lg); resize:vertical; outline:none; line-height:var(--leading-relaxed); transition:border-color var(--transition-fast); }
+.msgArea:focus { border-color:var(--border-focus); box-shadow:0 0 0 3px rgba(236,72,153,.1); }
+
+.engagementStats { display:grid; grid-template-columns:1fr 1fr; gap:var(--space-3); }
+.engStat  { display:flex; align-items:center; gap:var(--space-3); padding:var(--space-3); background:var(--clr-neutral-50); border-radius:var(--radius-lg); }
+.engIcon  { font-size:1.25rem; }
+.engValue { font-size:var(--text-xl); font-weight:var(--weight-bold); color:var(--text-primary); line-height:1; }
+.engLabel { font-size:var(--text-xs); color:var(--text-muted); }
+
+.logHeader { display:flex; align-items:center; justify-content:space-between; padding:var(--space-4) var(--space-5); border-bottom:1px solid var(--border-default); }
+.logList   {}
+.logItem   { display:flex; align-items:center; gap:var(--space-3); padding:var(--space-4) var(--space-5); border-bottom:1px solid var(--border-default); transition:background var(--transition-fast); }
+.logItem:last-child { border-bottom:none; }
+.logItem:hover { background:var(--surface-hover); }
+.logChannel { font-size:1.25rem; flex-shrink:0; }
+.logBody    { flex:1; min-width:0; }
+.logPatient { font-size:var(--text-sm); font-weight:var(--weight-medium); color:var(--text-primary); }
+.logType    { font-size:var(--text-xs); color:var(--text-muted); }
+.logTime    { font-size:11px; color:var(--text-muted); margin-top:2px; }
+
+.reminderList { display:flex; flex-direction:column; gap:var(--space-2); }
+.reminderItem { display:flex; align-items:center; justify-content:space-between; padding:var(--space-3); background:var(--clr-neutral-50); border-radius:var(--radius-lg); border:1px solid var(--border-default); }
+.reminderLeft { display:flex; align-items:center; gap:var(--space-3); }
+.reminderChannel { font-size:1.1rem; }
+.reminderPatient { font-size:var(--text-sm); font-weight:var(--weight-medium); color:var(--text-primary); }
+.reminderType    { font-size:var(--text-xs); color:var(--text-muted); }
+.reminderRight   {}

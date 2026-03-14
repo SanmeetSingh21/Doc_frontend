@@ -128,3 +128,21 @@ a:hover { color: var(--clr-primary-700); }
 .animate-fade-in    { animation: fadeIn 0.3s ease forwards; }
 .animate-slide-left { animation: slideInLeft 0.3s ease forwards; }
 .animate-pulse-soft { animation: pulse-soft 2s ease infinite; }
+
+/* ── Page transitions ── */
+.page-container {
+  animation: fadeIn 0.25s ease forwards;
+}
+
+/* ── Responsive: collapse sidebar on smaller screens ── */
+@media (max-width: 1024px) {
+  .main-content {
+    margin-left: var(--sidebar-collapsed-width);
+  }
+}
+
+@media (max-width: 768px) {
+  .page-container {
+    padding: var(--space-4);
+  }
+}
