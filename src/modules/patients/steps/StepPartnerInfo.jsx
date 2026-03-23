@@ -39,9 +39,12 @@ export default function StepPartnerInfo({ data, update }) {
       <div className={styles.section}>
         <h3 className={styles.sectionTitle}>Clinical Episode</h3>
         <div className={styles.grid2}>
-          <Select label="Episode Type" required value={data.episodeType}
-            onChange={e => update({ episodeType: e.target.value })}
-            options={EPISODE_TYPES} />
+          <Select
+  label="Episode Type" required
+  value={data.episodeType}
+  onChange={e => update({ episodeType: e.target.value })}
+  options={EPISODE_TYPES}  // { value, label } objects
+/>
           <Input label="Referred By" value={data.referredBy}
             onChange={e => update({ referredBy: e.target.value })} placeholder="Doctor / source" />
         </div>

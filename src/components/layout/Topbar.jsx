@@ -5,7 +5,7 @@ import { useAuth } from '@/store/index'
 import styles from './Topbar.module.css'
 
 export default function Topbar({ collapsed }) {
-  const { user, logout } = useAuth()
+  const { user, login, logout } = useAuth()
   const navigate = useNavigate()
   const [dropOpen, setDropOpen] = useState(false)
   const dropRef = useRef(null)
@@ -21,12 +21,41 @@ export default function Topbar({ collapsed }) {
     return () => document.removeEventListener('mousedown', handler)
   }, [])
 
+  // Fetch fresh user profile from backend on mount
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const token = localStorage.getItem('token')
+      if (!token) return
+
+      try {
+        const res = await fetch('http://localhost:3000/auth/me', {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+
+        if (res.ok) {
+          const data = await res.json()
+          // Update stored user with fresh data from backend
+          login(data.user || data.data || data)
+        }
+      } catch {
+        // Silently fail — keep existing stored user data
+      }
+    }
+
+    fetchProfile()
+  }, [])
+
   const handleLogout = () => {
     logout()
     navigate('/login', { replace: true })
   }
 
-  const initials = user?.name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'DR'
+  const initials = user?.name
+    ?.split(' ')
+    .map(n => n[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase() || 'DR'
 
   return (
     <header
@@ -51,8 +80,8 @@ export default function Topbar({ collapsed }) {
           <button className={styles.profile} onClick={() => setDropOpen(o => !o)}>
             <div className={styles.avatar}>{initials}</div>
             <div className={styles.profileInfo}>
-              <span className={styles.profileName}>{user?.name || 'Doctor'}</span>
-              <span className={styles.profileRole}>{user?.roleLabel || 'Staff'}</span>
+              <span className={styles.profileName}>{user?.name || 'Loading...'}</span>
+              <span className={styles.profileRole}>{user?.roleLabel || user?.role || '—'}</span>
             </div>
             <ChevronDown size={14} className={`${styles.chevron} ${dropOpen ? styles.chevronOpen : ''}`} />
           </button>
@@ -63,6 +92,7 @@ export default function Topbar({ collapsed }) {
                 <div className={styles.dropAvatar}>{initials}</div>
                 <div>
                   <div className={styles.dropName}>{user?.name}</div>
+                  <div className={styles.dropRole}>{user?.roleLabel || user?.role}</div>
                   <div className={styles.dropEmail}>{user?.email}</div>
                 </div>
               </div>

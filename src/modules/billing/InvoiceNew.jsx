@@ -20,7 +20,7 @@ const MOCK_PATIENTS = [
   { id:'P003', name:'Sunita Rao',   phone:'9712345678', lastVisit:'2026-03-07', lastVisitType:'OPD Consultation' },
   { id:'P004', name:'Kavya Menon',  phone:'9654321098', lastVisit:'2026-03-06', lastVisitType:'Ultrasound Study' },
   { id:'P005', name:'Reena Singh',  phone:'9532109876', lastVisit:'2026-03-05', lastVisitType:'OPD Consultation' },
-  { id:'P006', name:'Lakshmi Iyer', phone:'9481234567', lastVisit:'2026-02-20', lastVisitType:'OPD Consultation' },
+  { id:'P006', name:'Lakshmi Iyer', phone:'9481234567', lastVisit:'2026-03-20', lastVisitType:'OPD Consultation' },
 ]
 
 function daysBetween(dateStr) {

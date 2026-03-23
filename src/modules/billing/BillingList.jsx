@@ -13,7 +13,7 @@ const MOCK_INVOICES = [
   { id: 'INV002', patient: 'Anita Gupta',   patientId: 'P002', date: '09 Mar 2026', services: 'Follicular Study × 2',          amount: 1600,  paid: 800,   status: 'partial'  },
   { id: 'INV003', patient: 'Deepa Nair',    patientId: 'P003', date: '08 Mar 2026', services: 'NT Scan, Growth Scan',           amount: 3000,  paid: 0,     status: 'pending'  },
   { id: 'INV004', patient: 'Kavya Menon',   patientId: 'P004', date: '07 Mar 2026', services: 'Laser Vaginal Tightening',       amount: 15000, paid: 15000, status: 'paid'     },
-  { id: 'INV005', patient: 'Reena Singh',   patientId: 'P005', date: '06 Mar 2026', services: 'ANC Package',                   amount: 8000,  paid: 4000,  status: 'partial'  },
+  { id: 'INV005', patient: 'Reena Singh',   patientId: 'P005', date: '20 Mar 2026', services: 'ANC Package',                   amount: 8000,  paid: 4000,  status: 'partial'  },
   { id: 'INV006', patient: 'Lakshmi Iyer',  patientId: 'P006', date: '05 Mar 2026', services: 'IUI Procedure',                 amount: 8000,  paid: 8000,  status: 'paid'     },
 ]
 

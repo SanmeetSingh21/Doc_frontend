@@ -1,6 +1,6 @@
 import Input from '@components/ui/Input'
 import Select from '@components/ui/Select'
-import { BLOOD_GROUPS, MARITAL_STATUS, STATES_IN, RELIGIONS } from '../patientData'
+import { BLOOD_GROUPS, MARITAL_STATUS, STATES_IN, RELIGIONS, GENDER_OPTIONS } from '../patientData'
 import styles from './Step.module.css'
 
 export default function StepBasicInfo({ data, update }) {
@@ -27,10 +27,21 @@ export default function StepBasicInfo({ data, update }) {
             onChange={e => update({ religion: e.target.value })}
             options={RELIGIONS} placeholder="Select..." />
         </div>
-        <div className={styles.grid2}>
-          <Select label="Marital Status" required value={data.maritalStatus}
+        <div className={styles.grid3}>
+          <Select
+            label="Gender" required
+            value={data.gender}
+            onChange={e => update({ gender: e.target.value })}
+            options={GENDER_OPTIONS}
+            placeholder="Select..."
+          />
+          <Select
+            label="Marital Status" required
+            value={data.maritalStatus}
             onChange={e => update({ maritalStatus: e.target.value })}
-            options={MARITAL_STATUS} placeholder="Select..." />
+            options={MARITAL_STATUS}
+            placeholder="Select..."
+          />
           <Input label="Occupation" value={data.occupation}
             onChange={e => update({ occupation: e.target.value })} placeholder="Optional" />
         </div>

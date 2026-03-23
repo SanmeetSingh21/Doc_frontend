@@ -1,72 +1,149 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Plus, Search, Baby, AlertTriangle, Calendar } from 'lucide-react'
 import { Card } from '@components/ui/Card'
 import Button from '@components/ui/Button'
 import Badge from '@components/ui/Badge'
 import Table from '@components/ui/Table'
+import { pregnancyApi } from '@services/api'
 import styles from './PregnancyList.module.css'
-
-const MOCK = [
-  { id: 'PR001', name: 'Priya Sharma',  age: 28, lmp: '01 Jan 2026', edd: '08 Oct 2026', weeks: '10W 2D', visits: 2, risks: ['Anaemia'],                   status: 'active'   },
-  { id: 'PR002', name: 'Meena Pillai',  age: 31, lmp: '15 Nov 2025', edd: '22 Aug 2026', weeks: '17W 0D', visits: 4, risks: ['Gestational Diabetes'],       status: 'active'   },
-  { id: 'PR003', name: 'Deepa Nair',    age: 26, lmp: '10 Sep 2025', edd: '17 Jun 2026', weeks: '26W 3D', visits: 7, risks: ['Pre-eclampsia', 'Anaemia'],   status: 'high-risk'},
-  { id: 'PR004', name: 'Lakshmi Iyer',  age: 34, lmp: '20 Jul 2025', edd: '27 Apr 2026', weeks: '34W 6D', visits: 9, risks: [],                             status: 'active'   },
-  { id: 'PR005', name: 'Pooja Verma',   age: 29, lmp: '05 Jun 2025', edd: '12 Mar 2026', weeks: 'Delivered', visits: 12, risks: [],                         status: 'delivered'},
-]
 
 const STATUS_VARIANT = { active: 'success', 'high-risk': 'danger', delivered: 'teal' }
 
 export default function PregnancyList() {
   const navigate = useNavigate()
-  const [search, setSearch] = useState('')
 
-  const filtered = MOCK.filter(p =>
-    p.name.toLowerCase().includes(search.toLowerCase()) || p.id.includes(search)
+  const [search, setSearch] = useState('')
+  const [data, setData] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await pregnancyApi.getAll()
+        const d = res.data?.data || res.data
+        setData(Array.isArray(d) ? d : [])
+      } catch (err) {
+        console.error(err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    load()
+  }, [])
+
+  if (loading) return <div className="page-container">Loading...</div>
+
+  const filtered = data.filter(p =>
+    (p.patient?.name || '').toLowerCase().includes(search.toLowerCase()) ||
+    (p.id || '').toString().includes(search)
   )
 
   const COLUMNS = [
     {
-      key: 'name', label: 'Patient',
-      render: (val, row) => (
-        <div className={styles.patientCell}>
-          <div className={styles.avatar}>{val.split(' ').map(n=>n[0]).join('')}</div>
-          <div>
-            <div className={styles.name}>{val}</div>
-            <div className={styles.sub}>{row.id} · {row.age} yrs</div>
-          </div>
-        </div>
-      )
-    },
-    {
-      key: 'lmp', label: 'LMP / EDD',
-      render: (val, row) => (
-        <div>
-          <div className={styles.dateVal}><Calendar size={12}/> LMP: {val}</div>
-          <div className={styles.sub}><Baby size={12}/> EDD: {row.edd}</div>
-        </div>
-      )
-    },
-    {
-      key: 'weeks', label: 'Gestation',
-      render: v => (
-        <span className={styles.weeks}>{v}</span>
-      )
-    },
-    { key: 'visits', label: 'ANC Visits', render: v => <span className={styles.visits}>{v} visits</span> },
-    {
-      key: 'risks', label: 'Risk Flags',
-      render: v => v.length === 0
-        ? <span className={styles.noRisk}>None</span>
-        : (
-          <div className={styles.riskList}>
-            {v.map(r => <Badge key={r} variant="danger" size="sm"><AlertTriangle size={10}/> {r}</Badge>)}
+      key: 'name',
+      label: 'Patient',
+      render: (_, row) => {
+        const name = row.patient?.name || '—'
+        const age = row.patient?.age || '—'
+
+        return (
+          <div className={styles.patientCell}>
+            <div className={styles.avatar}>
+              {name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+            </div>
+            <div>
+              <div className={styles.name}>{name}</div>
+              <div className={styles.sub}>{row.id} · {age} yrs</div>
+            </div>
           </div>
         )
+      }
     },
     {
-      key: 'status', label: 'Status',
-      render: v => <Badge variant={STATUS_VARIANT[v]} dot>{v.charAt(0).toUpperCase()+v.slice(1).replace('-',' ')}</Badge>
+      key: 'lmp',
+      label: 'LMP / EDD',
+      render: (_, row) => {
+        const lmpDate = row.lmp ? new Date(row.lmp) : null
+
+        const lmp = lmpDate
+          ? lmpDate.toLocaleDateString('en-IN')
+          : '—'
+
+        const edd = lmpDate
+          ? new Date(lmpDate.getTime() + 280 * 24 * 60 * 60 * 1000)
+              .toLocaleDateString('en-IN')
+          : '—'
+
+        return (
+          <div>
+            <div className={styles.dateVal}>
+              <Calendar size={12}/> LMP: {lmp}
+            </div>
+            <div className={styles.sub}>
+              <Baby size={12}/> EDD: {edd}
+            </div>
+          </div>
+        )
+      }
+    },
+    {
+      key: 'weeks',
+      label: 'Gestation',
+      render: (_, row) => {
+        if (!row.lmp) return <span className={styles.weeks}>—</span>
+
+        const lmpDate = new Date(row.lmp)
+        const today = new Date()
+
+        const diffDays = Math.floor((today - lmpDate) / (1000 * 60 * 60 * 24))
+        const weeks = Math.floor(diffDays / 7)
+        const days = diffDays % 7
+
+        return <span className={styles.weeks}>{weeks}W {days}D</span>
+      }
+    },
+    {
+      key: 'visits',
+      label: 'ANC Visits',
+      render: (_, row) => (
+        <span className={styles.visits}>
+          {row.visits?.length || 0} visits
+        </span>
+      )
+    },
+    {
+      key: 'risks',
+      label: 'Risk Flags',
+      render: (_, row) => {
+        const risks = row.risks || []
+
+        return risks.length === 0
+          ? <span className={styles.noRisk}>None</span>
+          : (
+            <div className={styles.riskList}>
+              {risks.map(r => (
+                <Badge key={r} variant="danger" size="sm">
+                  <AlertTriangle size={10}/> {r}
+                </Badge>
+              ))}
+            </div>
+          )
+      }
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      render: (_, row) => {
+        const v = row.status || 'active'
+
+        return (
+          <Badge variant={STATUS_VARIANT[v] || 'default'} dot>
+            {v.charAt(0).toUpperCase() + v.slice(1).replace('-', ' ')}
+          </Badge>
+        )
+      }
     },
   ]
 
@@ -77,35 +154,52 @@ export default function PregnancyList() {
           <h1 className={styles.pageTitle}>Pregnancy & ANC</h1>
           <p className={styles.pageSub}>Antenatal care tracking</p>
         </div>
+
         <Button icon={Plus} onClick={() => navigate('/pregnancy/new')}>
           New Pregnancy
         </Button>
       </div>
 
       <div className={styles.statsRow}>
-        {[
-          { label: 'Active Pregnancies', value: '18', color: 'var(--clr-primary-600)' },
-          { label: 'High Risk',          value: '3',  color: 'var(--clr-danger-500)'  },
-          { label: 'Due This Month',     value: '2',  color: 'var(--clr-teal-600)'    },
-          { label: 'Delivered (MTD)',    value: '5',  color: 'var(--clr-accent-600)'  },
-        ].map(s => (
-          <Card key={s.label} padding="sm" className={styles.statCard}>
-            <div className={styles.statValue} style={{ color: s.color }}>{s.value}</div>
-            <div className={styles.statLabel}>{s.label}</div>
-          </Card>
-        ))}
+        <Card padding="sm" className={styles.statCard}>
+          <div className={styles.statValue}>—</div>
+          <div className={styles.statLabel}>Active Pregnancies</div>
+        </Card>
+
+        <Card padding="sm" className={styles.statCard}>
+          <div className={styles.statValue}>—</div>
+          <div className={styles.statLabel}>High Risk</div>
+        </Card>
+
+        <Card padding="sm" className={styles.statCard}>
+          <div className={styles.statValue}>—</div>
+          <div className={styles.statLabel}>Due This Month</div>
+        </Card>
+
+        <Card padding="sm" className={styles.statCard}>
+          <div className={styles.statValue}>—</div>
+          <div className={styles.statLabel}>Delivered (MTD)</div>
+        </Card>
       </div>
 
       <Card padding="none">
         <div className={styles.toolbar}>
           <div className={styles.searchWrap}>
             <Search size={14} className={styles.searchIcon}/>
-            <input className={styles.searchInput} placeholder="Search patient or ID..."
-              value={search} onChange={e => setSearch(e.target.value)}/>
+            <input
+              className={styles.searchInput}
+              placeholder="Search patient or ID..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+            />
           </div>
         </div>
-        <Table columns={COLUMNS} data={filtered}
-          onRowClick={row => navigate(`/pregnancy/${row.id}`)}/>
+
+        <Table
+          columns={COLUMNS}
+          data={filtered}
+          onRowClick={row => navigate(`/pregnancy/${row.id}`)}
+        />
       </Card>
     </div>
   )

@@ -37,17 +37,17 @@ export default function Sidebar({ collapsed, onToggle }) {
         {!collapsed && (
           <div className={styles.logoText}>
             <span className={styles.logoName}>GynaeCare</span>
-            <span className={styles.logoPro}>Pro</span>
+            <span className={styles.logoPro}></span>
           </div>
         )}
       </div>
 
       {/* Role badge */}
-      {!collapsed && (
+      {/* {!collapsed && (
         <div className={styles.roleBadge}>
           {user?.roleLabel}
         </div>
-      )}
+      )} */}
 
       {/* Nav */}
       <nav className={styles.nav}>
