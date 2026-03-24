@@ -5,7 +5,7 @@ import { Card } from '@components/ui/Card'
 import Button from '@components/ui/Button'
 import Badge from '@components/ui/Badge'
 import Table from '@components/ui/Table'
-import { pregnancyApi } from '@services/api'
+import { episodeApi } from '@services/api'
 import styles from './PregnancyList.module.css'
 
 const STATUS_VARIANT = { active: 'success', 'high-risk': 'danger', delivered: 'teal' }
@@ -20,9 +20,9 @@ export default function PregnancyList() {
   useEffect(() => {
     const load = async () => {
       try {
-        const res = await pregnancyApi.getAll()
+        const res = await episodeApi.getAll('pregnancy')
         const d = res.data?.data || res.data
-        setData(Array.isArray(d) ? d : [])
+        setData(Array.isArray(d) ? d : res.data.episodes || [])
       } catch (err) {
         console.error(err)
       } finally {
@@ -37,8 +37,44 @@ export default function PregnancyList() {
 
   const filtered = data.filter(p =>
     (p.patient?.name || '').toLowerCase().includes(search.toLowerCase()) ||
+    (p.patient?.id || '').toString().includes(search) ||
     (p.id || '').toString().includes(search)
   )
+
+  const patientMap = {}
+  filtered.forEach(e => {
+    const rawPatientId = e.patient?.id
+    if (!rawPatientId) return
+    const primaryPreg = e.pregnancies?.[0]
+    
+    if (!patientMap[rawPatientId]) {
+      patientMap[rawPatientId] = {
+        id: e.id,
+        rawPatientId,
+        patient: e.patient,
+        lmp: primaryPreg?.lmp || e.lmp, 
+        visits: primaryPreg?.ancVisits || [],
+        risks: primaryPreg?.risks || [],
+        status: e.episodeStatus || 'active'
+      }
+    }
+  })
+  const tableData = Object.values(patientMap)
+
+  const activeCount = tableData.filter(d => d.status === 'active').length
+  const highRiskCount = tableData.filter(d => d.risks && d.risks.length > 0).length
+  
+  const currentMonth = new Date().getMonth()
+  const currentYear = new Date().getFullYear()
+  
+  const dueThisMonthCount = tableData.filter(d => {
+    if (d.status !== 'active' || !d.lmp) return false
+    const lmpDate = new Date(d.lmp)
+    const edd = new Date(lmpDate.getTime() + 280 * 24 * 60 * 60 * 1000)
+    return edd.getMonth() === currentMonth && edd.getFullYear() === currentYear
+  }).length
+
+  const deliveredCount = tableData.filter(d => d.status?.toLowerCase() === 'delivered').length
 
   const COLUMNS = [
     {
@@ -55,7 +91,7 @@ export default function PregnancyList() {
             </div>
             <div>
               <div className={styles.name}>{name}</div>
-              <div className={styles.sub}>{row.id} · {age} yrs</div>
+              <div className={styles.sub}>{row.patient?.id?.slice(0,8) || '—'} · {age} yrs</div>
             </div>
           </div>
         )
@@ -154,31 +190,27 @@ export default function PregnancyList() {
           <h1 className={styles.pageTitle}>Pregnancy & ANC</h1>
           <p className={styles.pageSub}>Antenatal care tracking</p>
         </div>
-
-        <Button icon={Plus} onClick={() => navigate('/pregnancy/new')}>
-          New Pregnancy
-        </Button>
       </div>
 
       <div className={styles.statsRow}>
         <Card padding="sm" className={styles.statCard}>
-          <div className={styles.statValue}>—</div>
+          <div className={styles.statValue} style={{ color: 'var(--clr-primary-600)' }}>{loading ? '...' : activeCount}</div>
           <div className={styles.statLabel}>Active Pregnancies</div>
         </Card>
 
         <Card padding="sm" className={styles.statCard}>
-          <div className={styles.statValue}>—</div>
+          <div className={styles.statValue} style={{ color: 'var(--clr-danger-600)' }}>{loading ? '...' : highRiskCount}</div>
           <div className={styles.statLabel}>High Risk</div>
         </Card>
 
         <Card padding="sm" className={styles.statCard}>
-          <div className={styles.statValue}>—</div>
+          <div className={styles.statValue} style={{ color: 'var(--clr-accent-600)' }}>{loading ? '...' : dueThisMonthCount}</div>
           <div className={styles.statLabel}>Due This Month</div>
         </Card>
 
         <Card padding="sm" className={styles.statCard}>
-          <div className={styles.statValue}>—</div>
-          <div className={styles.statLabel}>Delivered (MTD)</div>
+          <div className={styles.statValue} style={{ color: 'var(--clr-teal-600)' }}>{loading ? '...' : deliveredCount}</div>
+          <div className={styles.statLabel}>Delivered</div>
         </Card>
       </div>
 
@@ -197,8 +229,8 @@ export default function PregnancyList() {
 
         <Table
           columns={COLUMNS}
-          data={filtered}
-          onRowClick={row => navigate(`/pregnancy/${row.id}`)}
+          data={tableData}
+          onRowClick={row => navigate(`/pregnancy/patient/${row.rawPatientId}`)}
         />
       </Card>
     </div>
