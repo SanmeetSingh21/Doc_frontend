@@ -80,6 +80,13 @@ export const episodeApi = {
   getById: (id)   => http.get(`/episodes/${id}`),
 }
 
+export const ultrasoundApi = {
+  getAll:  (params) => http.get('/ultrasounds', { params }),
+  getById: (id)     => http.get(`/ultrasounds/${id}`),
+  create:  (data)   => http.post('/ultrasounds', data),
+  update:  (id, data) => http.patch(`/ultrasounds/${id}`, data),
+}
+
 export const consultationApi = {
   create: (data) => http.post('/consultations', data),
   getById: (id)  => http.get(`/consultations/${id}`),
