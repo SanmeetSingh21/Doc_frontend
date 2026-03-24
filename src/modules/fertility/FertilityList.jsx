@@ -101,7 +101,6 @@ export default function FertilityList() {
           <h1 className={styles.pageTitle}>Fertility & IVF</h1>
           <p className={styles.pageSub}>Cycle tracking and outcomes</p>
         </div>
-        <Button icon={Plus} onClick={() => navigate('/fertility/new')}>New Cycle</Button>
       </div>
 
       <div className={styles.statsRow}>
