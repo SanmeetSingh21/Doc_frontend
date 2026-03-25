@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+const BASE_URL = import.meta.env.VITE_API_URL
 
 const http = axios.create({
   baseURL: BASE_URL,
@@ -57,4 +57,56 @@ export const pregnancyApi = {
   getVisits:      (id) => http.get(`/pregnancies/${id}/visits`),
   getVisitById:  (id) => http.get(`/pregnancies/visits/${id}`),
   createVisit:   (data) => http.post('/pregnancies/visits', data),
+}
+
+export const billingApi = {
+  getAll:        (params)  => http.get('/billing/invoices', { params }),
+  getById:       (id)      => http.get(`/billing/invoices/${id}`),
+  create:        (data)    => http.post('/billing/invoices', data),
+  recordPayment: (data)    => http.post('/billing/payments', data),
+}
+
+export const appointmentApi = {
+  getAll:         () => http.get('/appointments'),
+  getByPatientId: (patientId) => http.get(`/appointments/patient/${patientId}`),
+  getById:        (id) => http.get(`/appointments/${id}`),
+  create:         (data) => http.post('/appointments', data),
+  update:         (id, data) => http.patch(`/appointments/${id}`, data),
+  delete:         (id) => http.delete(`/appointments/${id}`),
+}
+
+export const episodeApi = {
+  getAll:  (type) => http.get('/episodes' + (type ? `?type=${type}` : '')),
+  getById: (id)   => http.get(`/episodes/${id}`),
+}
+
+export const ultrasoundApi = {
+  getAll:  (params) => http.get('/ultrasounds', { params }),
+  getById: (id)     => http.get(`/ultrasounds/${id}`),
+  create:  (data)   => http.post('/ultrasounds', data),
+  update:  (id, data) => http.patch(`/ultrasounds/${id}`, data),
+}
+
+export const consultationApi = {
+  create: (data) => http.post('/consultations', data),
+  getById: (id)  => http.get(`/consultations/${id}`),
+  update: (id, data) => http.patch(`/consultations/${id}`, data),
+}
+
+export const fertilityApi = {
+  createCycle: (data) => http.post('/fertility/cycles', data),
+  getCycleById: (id) => http.get(`/fertility/cycles/${id}`),
+  updateCycle: (id, data) => http.patch(`/fertility/cycles/${id}`, data),
+  addFollicularStudy: (data) => http.post('/fertility/follicular-studies', data),
+}
+
+export const ultrasoundApi = {
+  create: (data) => http.post('/ultrasound', data),
+  getById: (id) => http.get(`/ultrasound/${id}`),
+  update: (id, data) => http.patch(`/ultrasound/${id}`, data),
+}
+
+export const procedureApi = {
+  create: (data) => http.post('/procedure', data),
+  addSession: (data) => http.post('/procedure/sessions', data),
 }
