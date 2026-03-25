@@ -48,7 +48,7 @@ export default function EpisodeNew() {
         return
       }
 
-      await patientApi.addEpisode(id, {
+      const addRes = await patientApi.addEpisode(id, {
         type: data.episodeType,
         title: data.notes || undefined,
       })
@@ -63,8 +63,25 @@ export default function EpisodeNew() {
         })
       }
 
-      // After successful creation, navigate back to Patient profile
-      navigate(`/patients/${id}`)
+      // After successful creation, navigate to the specific episode form
+      const episode = addRes.data?.data || addRes.data
+      const episodeId = episode?.id
+      const type = data.episodeType
+
+      const routeMap = {
+        opd: '/opd/new',
+        ultrasound: '/ultrasound/new',
+        pregnancy: '/pregnancy/new',
+        procedure: '/reconstructive/new', // Map 'procedure' to reconstructive
+        // fertility: '/fertility/new',
+      }
+
+      const target = routeMap[type]
+      if (target && episodeId) {
+        navigate(`${target}?patientId=${id}&episodeId=${episodeId}`)
+      } else {
+        navigate(`/patients/${id}`)
+      }
 
     } catch (err) {
       console.error(err)

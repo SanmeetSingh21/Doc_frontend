@@ -2,18 +2,18 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Eye, EyeOff, Heart, AlertCircle } from 'lucide-react'
 import { useAuth } from '@/store/index'
-import { authApi } from '@services/api'
+import logo from '@/assets/logo_black.png'
 import styles from './Login.module.css'
 
 export default function Login() {
-  const navigate  = useNavigate()
+  const navigate = useNavigate()
   const { login } = useAuth()
 
-  const [email,    setEmail]    = useState('')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [showPwd,  setShowPwd]  = useState(false)
-  const [error,    setError]    = useState('')
-  const [loading,  setLoading]  = useState(false)
+  const [showPwd, setShowPwd] = useState(false)
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const handleLogin = async (e) => {
     e.preventDefault()
@@ -27,9 +27,26 @@ export default function Login() {
     setLoading(true)
 
     try {
-      const res = await authApi.login({ email: email.trim().toLowerCase(), password })
-      const data = res.data?.data || res.data
+      const res = await fetch('http://localhost:3000/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.trim().toLowerCase(), password })
+      })
+
+      const data = await res.json()
       console.log('LOGIN RESPONSE:', data)
+
+      if (!res.ok) {
+        setError(data.message || 'Login failed')
+        setLoading(false)
+        return
+      }
+
+      localStorage.setItem('token', data.accessToken || data.token || '')
+
+      // Pass the full user object — normalizeUser in store handles the shape
+      login(data.user || data.data || data)
+      navigate('/dashboard', { replace: true })
 
       localStorage.setItem('token', data.accessToken || data.token || '')
       login(data.user || data.data || data)
@@ -48,11 +65,9 @@ export default function Login() {
 
       {/* Logo */}
       <div className={styles.logoRow}>
-        <div className={styles.logoIcon}>
-          <Heart size={16} strokeWidth={2.5} color="white"/>
-        </div>
+        <img src={logo} alt="Logo" className={styles.logoImg} />
         <span className={styles.logoText}>
-          GynaeCare <span className={styles.logoPro}>Pro</span>
+          GynaeCare
         </span>
       </div>
 
@@ -63,7 +78,7 @@ export default function Login() {
 
         {error && (
           <div className={styles.errorBox}>
-            <AlertCircle size={14} style={{ flexShrink: 0 }}/>
+            <AlertCircle size={14} style={{ flexShrink: 0 }} />
             <span>{error}</span>
           </div>
         )}
@@ -109,7 +124,7 @@ export default function Login() {
                 tabIndex={-1}
                 aria-label="Toggle password"
               >
-                {showPwd ? <EyeOff size={15}/> : <Eye size={15}/>}
+                {showPwd ? <EyeOff size={15} /> : <Eye size={15} />}
               </button>
             </div>
           </div>
@@ -120,7 +135,7 @@ export default function Login() {
             disabled={loading}
           >
             {loading
-              ? <span className={styles.spinner}/>
+              ? <span className={styles.spinner} />
               : 'Sign in'
             }
           </button>
@@ -128,7 +143,7 @@ export default function Login() {
       </div>
 
       <p className={styles.footer}>
-        GynaeCare Pro · Clinic Management &amp; EMR Platform
+        GynaeCare · Clinic Management &amp; EMR Platform
       </p>
     </div>
   )

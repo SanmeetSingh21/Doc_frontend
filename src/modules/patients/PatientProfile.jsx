@@ -8,8 +8,16 @@ import { patientApi } from '@services/api'
 import styles from './PatientProfile.module.css'
 
 const EPISODE_VARIANT = {
-  opd: 'default', pregnancy: 'primary', fertility: 'teal',
-  ultrasound: 'warning', procedure: 'danger', lab: 'success',
+  opd: 'default', pregnancy: 'primary', // fertility: 'teal',
+  ultrasound: 'warning', procedure: 'danger', // lab: 'success',
+}
+
+const MODULE_ROUTES = {
+  opd: 'opd',
+  pregnancy: 'pregnancy',
+  ultrasound: 'ultrasound',
+  // fertility: 'fertility',
+  procedure: 'reconstructive',
 }
 
 export default function PatientProfile() {
@@ -123,7 +131,7 @@ export default function PatientProfile() {
                 ['Parity', patient?.parity ?? '—'],
                 ['Abortions', patient?.abortions ?? '—'],
                 ['Living Children', patient?.livingChildren ?? '—'],
-                ['Infertility', patient?.infertilityDuration || '—'],
+                // ['Infertility', patient?.infertilityDuration || '—'],
                 ['Contraception', patient?.contraceptionHistory || '—'],
               ].map(([label, value]) => (
                 <div key={label} className={styles.infoRow}>
@@ -146,21 +154,28 @@ export default function PatientProfile() {
               ? <p style={{ color: 'var(--text-muted)', fontSize: 'var(--text-sm)' }}>No episodes yet.</p>
               : (
                 <div className={styles.episodeList}>
-                  {episodes.map(ep => (
-                    <div key={ep.id} className={styles.episodeItem}>
-                      <Badge variant={EPISODE_VARIANT[ep.type] || 'default'}>
-                        {ep.type}
-                      </Badge>
-                      <span className={styles.episodeTitle}>{ep.title || '—'}</span>
-                      <span className={styles.episodeDate}>
-                        <Calendar size={12} />
-                        {ep.createdAt ? new Date(ep.createdAt).toLocaleDateString('en-IN') : '—'}
-                      </span>
-                      <Badge variant={ep.status === 'active' ? 'success' : 'default'} dot>
-                        {ep.status}
-                      </Badge>
-                    </div>
-                  ))}
+                  {episodes.map(ep => {
+                    const route = MODULE_ROUTES[ep.type]
+                    return (
+                      <div 
+                        key={ep.id} 
+                        className={`${styles.episodeItem} ${route ? styles.clickable : ''}`}
+                        onClick={() => route && navigate(`/${route}/patient/${id}`)}
+                      >
+                        <Badge variant={EPISODE_VARIANT[ep.type] || 'default'}>
+                          {ep.type}
+                        </Badge>
+                        <span className={styles.episodeTitle}>{ep.title || '—'}</span>
+                        <span className={styles.episodeDate}>
+                          <Calendar size={12} />
+                          {ep.createdAt ? new Date(ep.createdAt).toLocaleDateString('en-IN') : '—'}
+                        </span>
+                        <Badge variant={ep.status === 'active' ? 'success' : 'default'} dot>
+                          {ep.status}
+                        </Badge>
+                      </div>
+                    )
+                  })}
                 </div>
               )
             }

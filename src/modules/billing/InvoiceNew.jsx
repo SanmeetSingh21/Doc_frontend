@@ -20,7 +20,7 @@ const CAT_MAP = {
   Consultation: 'consultation',
   Ultrasound:   'ultrasound',
   Procedure:    'procedure',
-  Lab:          'lab_test',
+  // Lab:          'lab_test',
   Package:      'package',
 }
 
@@ -76,11 +76,23 @@ export default function InvoiceNew() {
       const res = await patientApi.getEpisodes(p.id)
       const fetched = res.data ?? []
       setEpisodes(fetched)
-      // Follow-up: most recent episode is OPD type and was created within 5 days
-      const latest = fetched[0]
-      if (latest && latest.type === 'opd' && latest.createdAt) {
-        const daysSince = Math.floor((Date.now() - new Date(latest.createdAt)) / 86400000)
+      // Follow-up: find most recent medical activity (episode creation or consultation) across all episodes
+      let latestActivity = 0
+      fetched.forEach(ep => {
+        const epDate = new Date(ep.createdAt).getTime()
+        if (epDate > latestActivity) latestActivity = epDate
+        
+        if (Array.isArray(ep.consultations) && ep.consultations.length > 0) {
+          const consDate = new Date(ep.consultations[0].createdAt).getTime()
+          if (consDate > latestActivity) latestActivity = consDate
+        }
+      })
+
+      if (latestActivity > 0) {
+        const daysSince = Math.floor((Date.now() - latestActivity) / 86400000)
         setIsFollowUp(daysSince <= 5)
+      } else {
+        setIsFollowUp(false)
       }
     } catch { setEpisodes([]) }
   }
@@ -550,6 +562,7 @@ export default function InvoiceNew() {
                         paymentPlan === 'session'  ? perSessionAmt :
                         total // upfront
                       await billingApi.recordPayment({
+                        patientId:   patient.id,
                         invoiceId:   res.data.id,
                         amount:      paidNow,
                         paymentDate: new Date().toISOString().split('T')[0],

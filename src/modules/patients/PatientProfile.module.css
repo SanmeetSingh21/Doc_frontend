@@ -43,6 +43,16 @@
   display:flex; align-items:center; gap:var(--space-3);
   padding:var(--space-3); background:var(--clr-neutral-50);
   border-radius:var(--radius-lg); border:1px solid var(--border-default);
+  transition:all var(--transition-fast);
+}
+.episodeItem.clickable {
+  cursor:pointer;
+}
+.episodeItem.clickable:hover {
+  background:white;
+  border-color:var(--clr-primary-300);
+  box-shadow:var(--shadow-sm);
+  transform:translateY(-1px);
 }
 .episodeTitle { flex:1; font-size:var(--text-sm); color:var(--text-secondary); }
 .episodeDate  { display:flex; align-items:center; gap:.25rem; font-size:var(--text-xs); color:var(--text-muted); }
