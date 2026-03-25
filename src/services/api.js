@@ -100,11 +100,7 @@ export const fertilityApi = {
   addFollicularStudy: (data) => http.post('/fertility/follicular-studies', data),
 }
 
-export const ultrasoundApi = {
-  create: (data) => http.post('/ultrasound', data),
-  getById: (id) => http.get(`/ultrasound/${id}`),
-  update: (id, data) => http.patch(`/ultrasound/${id}`, data),
-}
+
 
 export const procedureApi = {
   create: (data) => http.post('/procedure', data),
