@@ -1,0 +1,213 @@
+@page {
+  size: A4;
+  margin: 15mm;
+}
+
+.container {
+  width: 100%;
+  min-height: auto;
+  padding: 0;
+  margin: 0;
+  background: white !important;
+  font-family: 'Times New Roman', Times, serif;
+  color: #000;
+  line-height: 1.4;
+  box-sizing: border-box;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 30px;
+  border-bottom: 1.5px solid #000;
+  padding-bottom: 15px;
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+}
+
+.logo {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  margin-bottom: 8px;
+  filter: grayscale(100%); /* Force B&W logo */
+}
+
+.clinicName {
+  font-size: 24px;
+  font-weight: 700;
+  color: #000;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.clinicSub {
+  font-size: 13px;
+  color: #333;
+  margin: 0;
+}
+
+.contact {
+  text-align: right;
+  font-size: 11px;
+  color: #000;
+}
+
+.contact p { margin: 1px 0; }
+
+.gstin {
+  font-weight: 700;
+  margin-top: 5px !important;
+}
+
+.titleRow {
+  text-align: center;
+  margin-bottom: 25px;
+  border-bottom: 1px solid #000;
+  padding-bottom: 10px;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: #000;
+  margin: 0;
+}
+
+.statusBadge {
+  display: none; /* Removed for B&W simplicity */
+}
+
+.infoRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+.sectionTitle {
+  font-size: 10px;
+  font-weight: 700;
+  color: #000;
+  text-transform: uppercase;
+  border-bottom: 0.5px solid #000;
+  margin-bottom: 5px;
+  display: inline-block;
+}
+
+.patientName {
+  font-size: 16px;
+  font-weight: 700;
+  color: #000;
+  margin: 0 0 2px 0;
+}
+
+.patientInfo p {
+  font-size: 12px;
+  margin: 1px 0;
+  color: #000;
+}
+
+.invoiceInfo {
+  border: 1px solid #000;
+  padding: 12px;
+}
+
+.metaField {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  margin: 3px 0;
+}
+
+.metaField strong { font-weight: 700; }
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 25px;
+  border: 1px solid #000;
+}
+
+.table th {
+  background: #f0f0f0; /* Very light gray for header contrast */
+  padding: 8px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  border: 1px solid #000;
+}
+
+.table td {
+  padding: 8px;
+  border: 1px solid #000;
+  font-size: 12px;
+}
+
+.itemName {
+  font-weight: 600;
+}
+
+.itemCategory {
+  font-size: 9px;
+  color: #666;
+  margin-top: 1px;
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.notes {
+  display: none; /* Keep it clean for B&W */
+}
+
+.totals {
+  width: 45%;
+  display: flex;
+  flex-direction: column;
+}
+
+.totalLine {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  padding: 4px 0;
+}
+
+.grandTotal {
+  font-size: 15px;
+  font-weight: 700;
+  border-top: 1.5px solid #000;
+  border-bottom: 1.5px solid #000;
+  margin: 5px 0;
+  padding: 8px 0;
+}
+
+.due {
+  font-weight: 700;
+}
+
+.invoiceFooter {
+  margin-top: 50px;
+  border-top: 1px solid #000;
+  padding-top: 15px;
+  text-align: center;
+}
+
+.thanks {
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 3px;
+}
+
+.regInfo {
+  font-size: 10px;
+  color: #000;
+}
