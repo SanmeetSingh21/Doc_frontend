@@ -7,6 +7,7 @@ import Badge from '@components/ui/Badge'
 import Table from '@components/ui/Table'
 import { billingApi } from '@services/api'
 import { INVOICE_STATUS } from './billingData'
+import { utils, writeFile } from 'xlsx'
 import styles from './BillingList.module.css'
 
 // Extend status map to handle backend values not in billingData
@@ -60,6 +61,24 @@ export default function BillingList() {
     const matchFilter = filter === 'All' || i.status === filter.toLowerCase()
     return matchSearch && matchFilter
   })
+
+  const handleExport = () => {
+    const data = filtered.map(row => ({
+      'Invoice Number': row.invoiceNo,
+      'Patient Name': row.patient,
+      'Date': row.date,
+      'Services': row.services,
+      'Total Amount': row.amount,
+      'Amount Paid': row.paid,
+      'Balance Due': row.amount - row.paid,
+      'Status': STATUS_MAP[row.status]?.label || row.status
+    }))
+
+    const ws = utils.json_to_sheet(data)
+    const wb = utils.book_new()
+    utils.book_append_sheet(wb, ws, 'Invoices')
+    writeFile(wb, `GynaeCare_Invoices_${new Date().toISOString().split('T')[0]}.xlsx`)
+  }
 
   const now = new Date()
   const thisMonthInvoices = invoices.filter(inv => {
@@ -123,7 +142,7 @@ export default function BillingList() {
           <p className={styles.pageSub}>GST-compliant invoicing</p>
         </div>
         <div className={styles.headerActions}>
-          <Button variant="secondary" icon={Download} size="sm">Export</Button>
+          <Button variant="secondary" icon={Download} size="sm" onClick={handleExport}>Export</Button>
           <Button icon={Plus} onClick={() => navigate('/billing/new')}>New Invoice</Button>
         </div>
       </div>
