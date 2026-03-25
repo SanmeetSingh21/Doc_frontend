@@ -23,12 +23,11 @@
   min-height: var(--topbar-height);
 }
 
-.logoIcon {
-  width: 36px; height: 36px;
-  background: linear-gradient(135deg, var(--clr-primary-500), var(--clr-primary-700));
-  border-radius: var(--radius-lg);
-  display: flex; align-items: center; justify-content: center;
-  color: white;
+.logoImg {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
   flex-shrink: 0;
 }
 
