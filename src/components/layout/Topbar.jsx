@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { Bell, Search, ChevronDown, LogOut, User } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/store/index'
+import { authApi } from '@services/api'
 import styles from './Topbar.module.css'
 
 export default function Topbar({ collapsed }) {
@@ -28,15 +29,10 @@ export default function Topbar({ collapsed }) {
       if (!token) return
 
       try {
-        const res = await fetch('http://localhost:3000/auth/me', {
-          headers: { Authorization: `Bearer ${token}` }
-        })
-
-        if (res.ok) {
-          const data = await res.json()
-          // Update stored user with fresh data from backend
-          login(data.user || data.data || data)
-        }
+        const res = await authApi.me()
+        const data = res.data?.data || res.data
+        // Update stored user with fresh data from backend
+        login(data.user || data.data || data)
       } catch {
         // Silently fail — keep existing stored user data
       }
@@ -63,17 +59,17 @@ export default function Topbar({ collapsed }) {
       style={{ left: collapsed ? 'var(--sidebar-collapsed-width)' : 'var(--sidebar-width)' }}
     >
       {/* Search */}
-      <div className={styles.search}>
+      {/* <div className={styles.search}>
         <Search size={15} className={styles.searchIcon} />
         <input className={styles.searchInput} placeholder="Search patients, records..." type="search" />
-      </div>
+      </div> */}
 
       {/* Right */}
       <div className={styles.right}>
-        <button className={styles.iconBtn} aria-label="Notifications">
+        {/* <button className={styles.iconBtn} aria-label="Notifications">
           <Bell size={18} strokeWidth={1.75} />
           <span className={styles.badge}>3</span>
-        </button>
+        </button> */}
 
         {/* Profile dropdown */}
         <div className={styles.profileWrap} ref={dropRef}>
@@ -96,12 +92,12 @@ export default function Topbar({ collapsed }) {
                   <div className={styles.dropEmail}>{user?.email}</div>
                 </div>
               </div>
-              <hr className={styles.dropDivider}/>
-              <button className={styles.dropItem}>
+              <hr className={styles.dropDivider} />
+              {/* <button className={styles.dropItem}>
                 <User size={14}/> My Profile
-              </button>
+              </button> */}
               <button className={`${styles.dropItem} ${styles.dropLogout}`} onClick={handleLogout}>
-                <LogOut size={14}/> Sign out
+                <LogOut size={14} /> Sign out
               </button>
             </div>
           )}
