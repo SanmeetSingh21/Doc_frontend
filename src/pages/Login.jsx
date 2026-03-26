@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Eye, EyeOff, Heart, AlertCircle } from 'lucide-react'
 import { useAuth } from '@/store/index'
 import { authApi } from '@services/api'
+import logo from '@/assets/logo.png'
 import styles from './Login.module.css'
 
 export default function Login() {
