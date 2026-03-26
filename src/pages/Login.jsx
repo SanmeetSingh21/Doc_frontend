@@ -6,14 +6,14 @@ import { authApi } from '@services/api'
 import styles from './Login.module.css'
 
 export default function Login() {
-  const navigate  = useNavigate()
+  const navigate = useNavigate()
   const { login } = useAuth()
 
-  const [email,    setEmail]    = useState('')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [showPwd,  setShowPwd]  = useState(false)
-  const [error,    setError]    = useState('')
-  const [loading,  setLoading]  = useState(false)
+  const [showPwd, setShowPwd] = useState(false)
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const handleLogin = async (e) => {
     e.preventDefault()
@@ -48,11 +48,9 @@ export default function Login() {
 
       {/* Logo */}
       <div className={styles.logoRow}>
-        <div className={styles.logoIcon}>
-          <Heart size={16} strokeWidth={2.5} color="white"/>
-        </div>
+        <img src={logo} alt="Logo" className={styles.logoImg} />
         <span className={styles.logoText}>
-          GynaeCare <span className={styles.logoPro}>Pro</span>
+          GynaeCare
         </span>
       </div>
 
@@ -63,7 +61,7 @@ export default function Login() {
 
         {error && (
           <div className={styles.errorBox}>
-            <AlertCircle size={14} style={{ flexShrink: 0 }}/>
+            <AlertCircle size={14} style={{ flexShrink: 0 }} />
             <span>{error}</span>
           </div>
         )}
@@ -109,7 +107,7 @@ export default function Login() {
                 tabIndex={-1}
                 aria-label="Toggle password"
               >
-                {showPwd ? <EyeOff size={15}/> : <Eye size={15}/>}
+                {showPwd ? <EyeOff size={15} /> : <Eye size={15} />}
               </button>
             </div>
           </div>
@@ -120,7 +118,7 @@ export default function Login() {
             disabled={loading}
           >
             {loading
-              ? <span className={styles.spinner}/>
+              ? <span className={styles.spinner} />
               : 'Sign in'
             }
           </button>
@@ -128,7 +126,7 @@ export default function Login() {
       </div>
 
       <p className={styles.footer}>
-        GynaeCare Pro · Clinic Management &amp; EMR Platform
+        GynaeCare · Clinic Management &amp; EMR Platform
       </p>
     </div>
   )

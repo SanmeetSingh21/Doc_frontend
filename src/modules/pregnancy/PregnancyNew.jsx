@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { ArrowLeft, Save, Calculator } from 'lucide-react'
 import { Card } from '@components/ui/Card'
 import Button from '@components/ui/Button'
@@ -12,6 +12,9 @@ import styles from './PregnancyNew.module.css'
 
 export default function PregnancyNew() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const patientIdParams = searchParams.get('patientId')
+  const episodeIdParams = searchParams.get('episodeId')
 
   const [form, setForm] = useState({
     patientSearch: '',
@@ -35,6 +38,20 @@ export default function PregnancyNew() {
 
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+  const [fixedPatient, setFixedPatient] = useState(false)
+
+  useEffect(() => {
+    if (patientIdParams) {
+      patientApi.getById(patientIdParams).then(res => {
+        const p = res.data?.data || res.data
+        set({
+          selectedPatientId: p.id,
+          patientSearch: `${p.name} (${p.phone})`,
+        })
+        setFixedPatient(true)
+      }).catch(console.error)
+    }
+  }, [patientIdParams])
 
   const set = f => setForm(d => ({ ...d, ...f }))
 
@@ -96,6 +113,7 @@ export default function PregnancyNew() {
     try {
       const payload = {
         patientId: form.selectedPatientId,
+        episodeId: episodeIdParams || undefined,
 
         lmp: form.lmp || undefined,
         edd: form.eddOverride || edd || undefined,
@@ -145,8 +163,9 @@ export default function PregnancyNew() {
               <Input
                 label="Search Patient (Name / Phone)"
                 value={form.patientSearch}
-                onChange={e => handlePatientSearch(e.target.value)}
-                onFocus={() => setShowDropdown(true)}
+                onChange={e => !fixedPatient && handlePatientSearch(e.target.value)}
+                onFocus={() => !fixedPatient && setShowDropdown(true)}
+                disabled={fixedPatient}
               />
 
               {showDropdown && patientResults.length > 0 && (

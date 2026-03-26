@@ -1,12 +1,17 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { ArrowLeft, Printer, Download, CheckCircle } from 'lucide-react'
+import { ArrowLeft, Printer, Download, CheckCircle, Loader2 } from 'lucide-react'
+import { useReactToPrint } from 'react-to-print'
+import { jsPDF } from 'jspdf'
+import html2canvas from 'html2canvas'
+import { useRef } from 'react'
 import { Card } from '@components/ui/Card'
 import Button from '@components/ui/Button'
 import Badge from '@components/ui/Badge'
 import Select from '@components/ui/Select'
 import { billingApi } from '@services/api'
 import { PAYMENT_METHODS, PACKAGES } from './billingData'
+import PrintableInvoice from './PrintableInvoice'
 import styles from './InvoiceView.module.css'
 
 const fmt = n => `₹${Number(n).toLocaleString('en-IN')}`
@@ -25,6 +30,45 @@ export default function InvoiceView() {
   const [recording,   setRecording]   = useState(false)
   const [recError,    setRecError]    = useState(null)
   const [recSuccess,  setRecSuccess]  = useState(false)
+  const [downloading, setDownloading] = useState(false)
+
+  const printRef = useRef()
+
+  const handlePrint = useReactToPrint({
+    contentRef: printRef,
+    documentTitle: `GynaeCare_Invoice_${inv?.invoiceNumber || 'Download'}`,
+  })
+
+  const handleDownload = async () => {
+    if (!printRef.current) return
+    setDownloading(true)
+    try {
+      const element = printRef.current
+      const canvas = await html2canvas(element, {
+        scale: 3, // Increased scale for ultra-sharp text
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#ffffff',
+        onclone: (clonedDoc) => {
+          const el = clonedDoc.querySelector(`.${styles.container}`)
+          if (el) el.style.position = 'static'
+        }
+      })
+      const imgData = canvas.toDataURL('image/png')
+      const pdf = new jsPDF('p', 'mm', 'a4')
+      
+      const margin = 15 // Match the @page margin
+      const imgWidth = 210 - (margin * 2)
+      const imgHeight = (canvas.height * imgWidth) / canvas.width
+      
+      pdf.addImage(imgData, 'PNG', margin, margin, imgWidth, imgHeight)
+      pdf.save(`GynaeCare_Invoice_${inv.invoiceNumber}.pdf`)
+    } catch (err) {
+      console.error('PDF Generation Error:', err)
+    } finally {
+      setDownloading(false)
+    }
+  }
 
   const fetchInvoice = () => {
     console.log('[InvoiceView] fetchInvoice called. ID:', id)
@@ -181,8 +225,16 @@ export default function InvoiceView() {
 
         {/* Actions */}
         <div className={styles.actions}>
-          <Button icon={Printer} fullWidth variant="secondary">Print Invoice</Button>
-          <Button icon={Download} fullWidth variant="secondary">Download PDF</Button>
+          <Button icon={Printer} fullWidth variant="secondary" onClick={handlePrint}>Print Invoice</Button>
+          <Button 
+            icon={downloading ? Loader2 : Download} 
+            fullWidth 
+            variant="secondary" 
+            onClick={handleDownload}
+            disabled={downloading}
+          >
+            {downloading ? 'Generating PDF...' : 'Download PDF'}
+          </Button>
 
           {/* Record Payment panel — shown when balance is outstanding */}
           {Number(inv.outstandingAmount) > 0 && (
@@ -259,6 +311,7 @@ export default function InvoiceView() {
                   }
                   try {
                     await billingApi.recordPayment({
+                      patientId:       patientId,
                       invoiceId:       inv.id,
                       amount:          Number(recAmt),
                       paymentDate:     new Date().toISOString().split('T')[0],
@@ -284,6 +337,11 @@ export default function InvoiceView() {
             </Card>
           )}
         </div>
+      </div>
+
+      {/* Off-screen printable invoice — fixed width for capture consistency */}
+      <div style={{ position: 'absolute', top: '-10000px', left: '-10000px', width: '800px' }}>
+        <PrintableInvoice ref={printRef} data={inv} />
       </div>
     </div>
   )

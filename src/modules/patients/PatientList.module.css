@@ -106,3 +106,119 @@
   padding: var(--space-12); text-align: center;
   color: var(--text-muted); font-size: var(--text-sm);
 }
+
+.filtersPanel {
+  padding: var(--space-4) var(--space-5);
+  background: var(--clr-neutral-50);
+  border-bottom: 1px solid var(--border-default);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.filterSection {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-6);
+}
+
+.filterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.filterHeading {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.filterChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.filterChip {
+  padding: 0.25rem 0.75rem;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  border-radius: var(--radius-full);
+  background: white;
+  border: 1px solid var(--border-default);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.filterChip:hover {
+  border-color: var(--clr-primary-300);
+  color: var(--clr-primary-600);
+}
+
+.chipActive {
+  background: var(--clr-primary-600);
+  border-color: var(--clr-primary-600);
+  color: white;
+}
+
+.chipActive:hover {
+  background: var(--clr-primary-700);
+  border-color: var(--clr-primary-700);
+  color: white;
+}
+
+.sortSelect {
+  padding: 0.25rem 0.5rem;
+  font-size: var(--text-xs);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-default);
+  background: white;
+  color: var(--text-primary);
+  outline: none;
+}
+.sortSelect {
+  padding: 0.25rem 0.5rem;
+  font-size: var(--text-xs);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-default);
+  outline: none;
+}
+
+.interactionCell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.visitLine, .episodeLine {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  font-size: var(--text-xs);
+}
+.interactionLabel {
+  color: var(--text-muted);
+  font-weight: var(--weight-medium);
+  min-width: 32px;
+}
+.dateText {
+  color: var(--text-primary);
+  font-weight: var(--weight-medium);
+}
+.epValue {
+  color: var(--clr-primary-600);
+  font-weight: var(--weight-medium);
+}
+.textMuted {
+  color: var(--text-muted);
+  font-style: italic;
+}
