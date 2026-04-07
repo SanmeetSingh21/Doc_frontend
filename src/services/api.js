@@ -5,13 +5,7 @@ const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 const http = axios.create({
   baseURL: BASE_URL,
   headers: { 'Content-Type': 'application/json' },
-  // withCredentials: true,
-})
-
-http.interceptors.request.use(config => {
-  const token = localStorage.getItem('token')
-  if (token) config.headers.Authorization = `Bearer ${token}`
-  return config
+  withCredentials: true,
 })
 
 http.interceptors.response.use(
@@ -19,7 +13,6 @@ http.interceptors.response.use(
   err => {
     if (err.response?.status === 401) {
       localStorage.removeItem('gynaecare_user')
-      localStorage.removeItem('token')
       window.location.href = '/login'
     }
     return Promise.reject(err)
