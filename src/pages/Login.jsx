@@ -31,6 +31,7 @@ export default function Login() {
       const res = await authApi.login({ email: email.trim().toLowerCase(), password })
       const data = res.data?.data || res.data
 
+      localStorage.setItem('token', data.accessToken || data.token || '')
       login(data.user || data.data || data)
       navigate('/dashboard', { replace: true })
     } catch (err) {
