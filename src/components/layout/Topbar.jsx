@@ -25,6 +25,9 @@ export default function Topbar({ collapsed }) {
   // Fetch fresh user profile from backend on mount
   useEffect(() => {
     const fetchProfile = async () => {
+      const token = localStorage.getItem('token')
+      if (!token) return
+
       try {
         const res = await authApi.me()
         const data = res.data?.data || res.data

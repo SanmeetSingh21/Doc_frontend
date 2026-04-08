@@ -66,6 +66,7 @@ export function AuthProvider({ children }) {
 
   const logout = () => {
     localStorage.removeItem('gynaecare_user')
+    localStorage.removeItem('token')
     localStorage.removeItem('user')
     setUser(null)
   }
